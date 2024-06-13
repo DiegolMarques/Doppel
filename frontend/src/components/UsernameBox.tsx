@@ -6,13 +6,15 @@ const UsernameBox = () => {
   const [username, setUsername] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('http:localhost:8000/users/user')
-      .then((res) => res.json())
-      .then((data) => setUsername(data[0].name));
+    const fetchData = async () => {
+      const res = await fetch('http://localhost:8000/users/user');
+      const data = await res.json();
+      console.log(data[0]);
+      setUsername(data[0].name);
+    };
+    fetchData();
   }, []);
 
-
-  console.log(fetch('http:localhost:8000/users/user').then((res) => res.json()));
 
   return <div> <h1 className="text text-xxl m-10">Hello World {username}!</h1></div>;
 };
