@@ -1,15 +1,25 @@
-import './App.css'
-import Navbar from './components/Navbar'
-import UsernameBox from './components/UsernameBox'
+// src/App.tsx
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import './App.css';
+import Login from './pages/Login';
+import Navbar from './components/Navbar';
+import SignUp from './pages/Signup';
+import Home from './pages/Home';
 
-function App() {
-
+const App: React.FC = () => {
   return (
-    <div>
+    <Router>
       <Navbar />
-      <UsernameBox />
-    </div>
-  )
-}
+      <div className="container mx-auto mt-8">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/signup" element={<SignUp />} />
+        </Routes>
+      </div>
+    </Router>
+  );
+};
 
-export default App
+export default App;

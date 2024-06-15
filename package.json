@@ -7,5 +7,10 @@
     "start": "(cd backend && yarn run start) & (cd frontend && yarn run start)"
   },
   "author": "",
-  "license": "ISC"
+  "license": "ISC",
+  "dependencies": {
+    "firebase": "^10.12.2",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
+  }
 }
