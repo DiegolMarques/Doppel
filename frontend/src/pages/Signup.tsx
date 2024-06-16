@@ -20,12 +20,12 @@ const SignUp: React.FC = () => {
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <div className="w-full max-w-md p-8 space-y-6 bg-white rounded-lg shadow-md">
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="w-full max-w-md p-8 space-y-6 rounded-lg ">
         <h2 className="text-2xl font-bold text-center">Sign Up</h2>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">Email:</label>
+            <label className="block mb-1 text-sm font-medium">Email:</label>
             <input
               type="email"
               value={email}
@@ -35,7 +35,7 @@ const SignUp: React.FC = () => {
             />
           </div>
           <div>
-            <label className="block mb-1 text-sm font-medium text-gray-700">Password:</label>
+            <label className="block mb-1 text-sm font-medium">Password:</label>
             <input
               type="password"
               value={password}
