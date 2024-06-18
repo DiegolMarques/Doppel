@@ -9,13 +9,11 @@ import Home from './pages/Home';
 const App: React.FC = () => {
   return (
     <Router>
-      <div className="container mx-auto mt-8">
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/signup" element={<SignUp />} />
-        </Routes>
-      </div>
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/signup" element={<SignUp />} />
+      </Routes>
     </Router>
   );
 };

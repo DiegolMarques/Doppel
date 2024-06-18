@@ -8,16 +8,13 @@ const UsernameBox = () => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const res = await api.get(`/users/user`);
-      const data = await res.data;
-      console.log(data[0]);
+      const res = await fetch("http://localhost:8000/users/user");
+      console.log(res);
+      const data = await res.json();
       setUsername(data[0].name);
     };
     fetchData();
   }, []);
-
-
-
 
 
   return <div> <h1 className="text text-xxl m-10">Hello World {username}!</h1></div>;
