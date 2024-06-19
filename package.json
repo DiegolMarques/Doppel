@@ -1,0 +1,12 @@
+{
+  "name": "doppel",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "setup": "(cd backend && yarn run setup) && (cd frontend && yarn run setup)",
+    "start": "(cd backend && yarn run start) & (cd frontend && yarn run start)"
+  },
+  "author": "",
+  "license": "ISC",
+  "description": ""
+}
