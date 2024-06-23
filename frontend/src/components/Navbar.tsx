@@ -1,20 +1,48 @@
-// src/Navbar.js
+import Link from "next/link";
+import MaxWidthWrapper from "./MaxWidthWrapper";
+import { Button, buttonVariants } from "./ui/button";
+import { LoginLink, RegisterLink } from "@kinde-oss/kinde-auth-nextjs/server"
+import { ArrowRight } from "lucide-react";
 
 const Navbar = () => {
   return (
-    <nav className="border-b border-gray-700">
-      <div className="container mx-auto flex justify-between items-center p-5">
-        <div className="text-white text-xl">
-          <a href="/">Doppel</a>
+    <nav className="sticky h-14 inset-x-0 top-0 z-30 w-full border-b border-gray-200 bg-background/75 backdrop-blur-lg transition-all">
+      <MaxWidthWrapper>
+        <div className="flex h-14 items-center justify-between border-b border-border">
+          <Link
+            href='/'
+            className='flex z-40 font-semibold'>
+            <span>doppel.</span>
+          </Link>
+
+          {/* todo: add mobile navbar*/}
+
+          <div className="hidden items-center space-x-4 sm:flex">
+            <>
+              <Link href='/pricing' className={buttonVariants({
+                variant: "ghost",
+                size: "sm",
+              })}>
+                Pricing
+              </Link>
+              <Link href='/login' className={buttonVariants({
+                variant: "ghost",
+                size: "sm",
+              })}>
+                Sign In
+              </Link>
+              <Link href='/signup' className={buttonVariants({
+                size: "sm",
+              })}>
+                Get started <ArrowRight className='ml-1.5 h-5 w-5' />
+              </Link>
+              {/* <ThemeToggle /> */}
+            </>
+          </div>
         </div>
-        <ul className="flex gap-16">
-          <li><a href="/" className="text-xl">Home</a></li>
-          <li><a href="/about" className="text-xl">About</a></li>
-          <li><a href="/contact" className="text-xl">Contact</a></li>
-        </ul>
-      </div>
+      </MaxWidthWrapper>
     </nav>
   );
-};
+}
 
 export default Navbar;
