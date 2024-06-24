@@ -5,7 +5,8 @@
   "scripts": {
     "setup": "yarn install && npx prisma migrate dev",
     "start": "npx prisma studio --browser none & yarn run backend",
-    "backend": "nodemon -r dotenv/config src/index.ts"
+    "backend": "nodemon -r dotenv/config src/index.ts",
+    "vercel-build": "npx prisma generate && yarn build"
   },
   "keywords": [],
   "author": "",
