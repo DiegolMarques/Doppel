@@ -12,6 +12,7 @@ const Dashboard = () => {
   const [currentlyDeleting, setCurrentlyDeleting] = useState<string | null>(null);
   const [conversations, setConversations] = useState<{ id: string; name: string; createdAt: string }[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const prodlink = "https://doppel-backend.vercel.app"
 
   useEffect(() => {
     fetchConversations();
@@ -19,7 +20,7 @@ const Dashboard = () => {
 
   const fetchConversations = async () => {
     try {
-      const response = await axios.get("http://localhost:8000" + '/conversations/conversation');
+      const response = await axios.get(process.env.NEXT_PUBLIC_API_URL + '/conversations/conversation');
       setConversations(response.data);
       setIsLoading(false);
     } catch (error) {
@@ -31,7 +32,7 @@ const Dashboard = () => {
   const deleteConversation = async (id: string) => {
     setCurrentlyDeleting(id);
     try {
-      await axios.delete("http://localhost:8000" + `/conversations/conversation/${id}`);
+      await axios.delete(process.env.NEXT_PUBLIC_API_URL + `/conversations/conversation/${id}`);
       fetchConversations();
     } catch (error) {
       console.error('Error deleting conversation:', error);

@@ -34,7 +34,7 @@ const UploadButton = () => {
   const handleSubmit = async () => {
     setIsSubmitting(true)
     try {
-      await axios.post("http://localhost:8000" + `/conversations/conversation`, { name, conversationString })
+      await axios.post(process.env.NEXT_PUBLIC_API_URL + `/conversations/conversation`, { name, conversationString })
       handleClose()
       router.refresh() // Refresh the page to show the new conversation
     } catch (error) {
