@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import Navbar from "@/components/Navbar";
 
 import 'react-loading-skeleton/dist/skeleton.css';
+import { AuthProvider } from "@/components/AuthProvider";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -24,8 +25,10 @@ export default function RootLayout({
         'min-h-screen font-sans antialiased grainy',
         inter.className
       )}>
+        <AuthProvider>
         <Navbar />
         {children}
+        </AuthProvider>
       </body>
     </html>
   );
