@@ -8,11 +8,11 @@ import { Button } from "./ui/button";
 import { useState, useEffect, SetStateAction } from "react";
 import axios from 'axios';
 
+
 const Dashboard = () => {
   const [currentlyDeleting, setCurrentlyDeleting] = useState<string | null>(null);
   const [conversations, setConversations] = useState<{ id: string; name: string; createdAt: string }[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const prodlink = "https://doppel-backend.vercel.app"
 
   useEffect(() => {
     fetchConversations();
