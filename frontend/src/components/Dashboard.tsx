@@ -3,10 +3,12 @@ import UploadButton from "./UploadButton";
 import { Ghost, Loader2, MessageSquare, Plus, Trash } from "lucide-react";
 import Skeleton from 'react-loading-skeleton';
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { format } from 'date-fns';
 import { Button } from "./ui/button";
 import { useState, useEffect, SetStateAction } from "react";
 import axios from 'axios';
+import { useAuth } from "./AuthProvider";
 
 
 const Dashboard = () => {
@@ -20,7 +22,10 @@ const Dashboard = () => {
 
   const fetchConversations = async () => {
     try {
-      const response = await axios.get(process.env.NEXT_PUBLIC_API_URL + '/conversations/conversation');
+      const user = useAuth().user;
+      const userId = user?.providerData[0].uid;
+      console.log("userId: ", userId);
+      const response = await axios.get(process.env.NEXT_PUBLIC_API_URL + '/conversations/${userId}');
       setConversations(response.data);
       setIsLoading(false);
     } catch (error) {

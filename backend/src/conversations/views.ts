@@ -4,9 +4,14 @@ import { PrismaClient } from "@prisma/client";
 const conversationRouter = Router();
 const prisma = new PrismaClient();
 
-conversationRouter.get("/conversation", async (req: Request, res: Response) => {
+conversationRouter.get("/:userid", async (req: Request, res: Response) => {
   try {
-    const conversations = await prisma.conversation.findMany();
+    const userId = req.params.userid;
+    const conversations = await prisma.conversation.findMany({
+      where: {
+        userId: userId,
+      },
+    });;
     res.json(conversations);
   } catch (error) {
     console.error('Error fetching conversations:', error);
