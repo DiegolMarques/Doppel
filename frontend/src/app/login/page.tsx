@@ -5,15 +5,18 @@ import { signInWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardFooter } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
-import { useToast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
+import { useToast } from "@/components/ui/use-toast";
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const router = useRouter();
   const { toast } = useToast();
 
   const handleSubmit = async (event: FormEvent) => {
@@ -21,10 +24,20 @@ const Login: React.FC = () => {
     setIsLoading(true);
     try {
       await signInWithEmailAndPassword(auth, email, password);
-      //window.location.href = '/hahahehe'; // Redirect to home page
-      console.log("success")
+      toast({
+        title: "Success",
+        description: "You have successfully logged in.",
+        duration: 3000,
+      });
+      router.push('/dashboard');
     } catch (error: any) {
-      console.log(error.message);
+      console.error(error.message);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: error.message || "An error occurred during login.",
+        duration: 5000,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -70,6 +83,14 @@ const Login: React.FC = () => {
             </Button>
           </form>
         </CardContent>
+        <CardFooter className="flex justify-center">
+          <p className="text-sm text-gray-600">
+            Don't have an account?{' '}
+            <Link href="/signup" className="text-blue-600 hover:underline">
+              Sign up
+            </Link>
+          </p>
+        </CardFooter>
       </Card>
     </div>
   );
