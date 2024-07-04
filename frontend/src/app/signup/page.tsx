@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
+import axios from 'axios';
 
 const SignUp: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -19,7 +20,13 @@ const SignUp: React.FC = () => {
     event.preventDefault();
     setIsLoading(true);
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      await createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
+        // Signed up 
+        const user = userCredential.user;
+        const email = user.email;
+        const firebaseId = user.uid;
+        axios.post(process.env.NEXT_PUBLIC_API_URL + '/users/', {email: email, firebaseId: firebaseId});
+      });
 
       // You can redirect to another page here
       console.log('User signed up');
