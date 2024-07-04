@@ -5,26 +5,39 @@ import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { auth } from '@/lib/firebase';
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
+import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 const SignUp: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { toast } = useToast();
+  const router = useRouter();
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
     setIsLoading(true);
     try {
       await createUserWithEmailAndPassword(auth, email, password);
-
-      // You can redirect to another page here
-      console.log('User signed up');
+      toast({
+        title: "Success",
+        description: "Your account has been created successfully.",
+        duration: 3000,
+      });
+      router.push('/dashboard'); // Redirect to dashboard after successful sign-up
     } catch (error: any) {
-      console.log(error.message);
+      console.error(error.message);
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "An error occurred during sign-up.",
+        duration: 5000,
+      });
     } finally {
       setIsLoading(false);
     }
@@ -70,6 +83,14 @@ const SignUp: React.FC = () => {
             </Button>
           </form>
         </CardContent>
+        <CardFooter className="flex justify-center">
+          <p className="text-sm text-gray-600">
+            Already have an account?{' '}
+            <Link href="/login" className="text-blue-600 hover:underline">
+              Log in
+            </Link>
+          </p>
+        </CardFooter>
       </Card>
     </div>
   );
