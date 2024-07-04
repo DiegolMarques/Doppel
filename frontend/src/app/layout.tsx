@@ -6,6 +6,7 @@ import Navbar from "@/components/Navbar";
 
 import 'react-loading-skeleton/dist/skeleton.css';
 import { AuthProvider } from "@/components/AuthProvider";
+import { Toaster } from "@/components/ui/toaster";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -26,8 +27,9 @@ export default function RootLayout({
         inter.className
       )}>
         <AuthProvider>
-        <Navbar />
-        {children}
+          <Navbar />
+          {children}
+          <Toaster />
         </AuthProvider>
       </body>
     </html>
