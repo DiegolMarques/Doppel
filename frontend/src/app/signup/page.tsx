@@ -9,6 +9,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2 } from "lucide-react";
+import axios from 'axios';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 
@@ -23,7 +24,12 @@ const SignUp: React.FC = () => {
     event.preventDefault();
     setIsLoading(true);
     try {
-      await createUserWithEmailAndPassword(auth, email, password);
+      await createUserWithEmailAndPassword(auth, email, password).then((userCredential) => {
+        const user = userCredential.user;
+        const email = user.email;
+        const firebaseId = user.uid;
+        axios.post(process.env.NEXT_PUBLIC_API_URL + '/users/', {email: email, firebaseId: firebaseId});
+      });
       toast({
         title: "Success",
         description: "Your account has been created successfully.",
