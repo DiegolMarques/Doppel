@@ -6,19 +6,21 @@ import { Textarea } from "./ui/textarea"
 import { Input } from "./ui/input"
 import { ArrowRight } from "lucide-react"
 import { Button, buttonVariants } from "./ui/button"
-import { useRouter } from 'next/navigation'
 import axios from 'axios'
+import { getAuth } from "firebase/auth"
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000'
 
-const UploadButton = () => {
+interface UploadButtonProps {
+  onUploadSuccess: () => void;
+}
+
+const UploadButton: React.FC<UploadButtonProps> = ({ onUploadSuccess }) => {
   const [isOpen, setIsOpen] = useState(false)
   const [step, setStep] = useState(1)
   const [name, setName] = useState("")
   const [conversationString, setConversationString] = useState("")
   const [isSubmitting, setIsSubmitting] = useState(false)
-
-  const router = useRouter()
 
   const handleNext = () => {
     setStep(2)
@@ -34,9 +36,22 @@ const UploadButton = () => {
   const handleSubmit = async () => {
     setIsSubmitting(true)
     try {
-      await axios.post(process.env.NEXT_PUBLIC_API_URL + `/conversations/conversation`, { name, conversationString })
+      const auth = getAuth();
+      const user = auth.currentUser;
+
+      if (!user) {
+        throw new Error('No user logged in');
+      }
+      console.log(user.uid)
+      const userId = user.uid
+
+      await axios.post(process.env.NEXT_PUBLIC_API_URL + `/conversations/conversation`, {
+        name,
+        conversationString,
+        userId
+      });
       handleClose()
-      router.refresh() // Refresh the page to show the new conversation
+      onUploadSuccess(); // Call this after successful upload
     } catch (error) {
       console.error('Error creating conversation:', error)
       // Handle error (e.g., show an error message to the user)

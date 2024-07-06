@@ -11,26 +11,27 @@ import { Loader2 } from "lucide-react";
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useToast } from "@/components/ui/use-toast";
+import { useMutation } from '@tanstack/react-query';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
-  const [isLoading, setIsLoading] = useState<boolean>(false);
   const router = useRouter();
   const { toast } = useToast();
 
-  const handleSubmit = async (event: FormEvent) => {
-    event.preventDefault();
-    setIsLoading(true);
-    try {
-      await signInWithEmailAndPassword(auth, email, password);
+  const loginMutation = useMutation({
+    mutationFn: async ({ email, password }: { email: string; password: string }) => {
+      return await signInWithEmailAndPassword(auth, email, password);
+    },
+    onSuccess: () => {
       toast({
         title: "Success",
         description: "You have successfully logged in.",
         duration: 3000,
       });
       router.push('/dashboard');
-    } catch (error: any) {
+    },
+    onError: (error: any) => {
       console.error(error.message);
       toast({
         variant: "destructive",
@@ -38,9 +39,12 @@ const Login: React.FC = () => {
         description: error.message || "An error occurred during login.",
         duration: 5000,
       });
-    } finally {
-      setIsLoading(false);
-    }
+    },
+  });
+
+  const handleSubmit = (event: FormEvent) => {
+    event.preventDefault();
+    loginMutation.mutate({ email, password });
   };
 
   return (
@@ -71,8 +75,8 @@ const Login: React.FC = () => {
                 required
               />
             </div>
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? (
+            <Button type="submit" className="w-full" disabled={loginMutation.isLoading}>
+              {loginMutation.isLoading ? (
                 <>
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                   Logging in...

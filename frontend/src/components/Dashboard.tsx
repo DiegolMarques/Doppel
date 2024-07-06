@@ -5,42 +5,54 @@ import Skeleton from 'react-loading-skeleton';
 import Link from "next/link";
 import { format } from 'date-fns';
 import { Button } from "./ui/button";
-import { useState, useEffect, SetStateAction } from "react";
+import { useState, useEffect } from "react";
 import axios from 'axios';
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 
+interface Conversation {
+  id: string;
+  createdAt: string | number | Date;
+  name: string;
+}
 
 const Dashboard = () => {
-  const [currentlyDeleting, setCurrentlyDeleting] = useState<string | null>(null);
-  const [conversations, setConversations] = useState<{ id: string; name: string; createdAt: string }[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
+  const [user, setUser] = useState<any>(null);
+  const queryClient = useQueryClient();
 
   useEffect(() => {
-    fetchConversations();
+    const auth = getAuth();
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+
+    return () => unsubscribe();
   }, []);
 
   const fetchConversations = async () => {
-    try {
-      const response = await axios.get(process.env.NEXT_PUBLIC_API_URL + '/conversations/conversation');
-      setConversations(response.data);
-      setIsLoading(false);
-    } catch (error) {
-      console.error('Error fetching conversations:', error);
-      setIsLoading(false);
-    }
+    if (!user) return [];
+    const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/conversations/conversation?userId=${user.uid}`);
+    return response.data;
   };
 
-  const deleteConversation = async (id: string) => {
-    setCurrentlyDeleting(id);
-    try {
-      await axios.delete(process.env.NEXT_PUBLIC_API_URL + `/conversations/conversation/${id}`);
-      fetchConversations();
-    } catch (error) {
-      console.error('Error deleting conversation:', error);
-    } finally {
-      setCurrentlyDeleting(null);
-    }
-  };
+  const { data: conversations, isLoading } = useQuery({
+    queryKey: ['conversations', user?.uid],
+    queryFn: fetchConversations,
+    enabled: !!user
+  });
 
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/conversations/conversation/${id}`);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['conversations', user?.uid] });
+    },
+  });
+
+  const refetchConversations = () => {
+    queryClient.invalidateQueries({ queryKey: ['conversations', user?.uid] });
+  };
 
   return (
     <main className='mx-auto max-w-7xl md:p-10'>
@@ -48,17 +60,16 @@ const Dashboard = () => {
         <h1 className='mb-3 font-bold text-5xl text-gray-900'>
           My Conversations
         </h1>
-        <UploadButton />
+        <UploadButton onUploadSuccess={refetchConversations} />
       </div>
 
-      {/* display all conversations */}
       {conversations && conversations.length !== 0 ? (
         <ul className="mt-8 grid grid-cols-1 gap-6 divide-y divide-zinc-200 md:grid-cols-2 lg:grid-cols-3">
           {conversations.sort(
-            (a, b) =>
+            (a: Conversation, b: Conversation) =>
               new Date(b.createdAt).getTime() -
               new Date(a.createdAt).getTime()
-          ).map((conversation => (
+          ).map((conversation: Conversation) => (
             <li key={conversation.id} className='col-span-1 divide-y divide-gray-200 rounded-lg bg-white shadow transition hover:shadow-lg'>
               <Link href={`/dashboard/${conversation.id}`} className='flex flex-col gap-2'>
                 <div className="pt-6 px-6 flex w-full items-center justify-between space-x-6">
@@ -80,15 +91,22 @@ const Dashboard = () => {
                   mocked
                 </div>
 
-                <Button onClick={() => deleteConversation(conversation.id)} size='sm' className="w-full" variant='destructive'>
-                  {currentlyDeleting === conversation.id ? (
+                <Button
+                  onClick={() => deleteMutation.mutate(conversation.id)}
+                  size='sm'
+                  className="w-full"
+                  variant='destructive'
+                  disabled={deleteMutation.isLoading}
+                >
+                  {deleteMutation.isLoading && deleteMutation.variables === conversation.id ? (
                     <Loader2 className="h-4 w-4 animate-spin" />
-                  ) :
-                    <Trash className="h-4 w-4" />}
+                  ) : (
+                    <Trash className="h-4 w-4" />
+                  )}
                 </Button>
               </div>
             </li>
-          )))}
+          ))}
         </ul>
       ) : isLoading ? (
         <Skeleton count={3} height={100} className='my-2' />
