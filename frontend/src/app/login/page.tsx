@@ -29,6 +29,7 @@ const Login: React.FC = () => {
         description: "You have successfully logged in.",
         duration: 3000,
       });
+      router.refresh()
       router.push('/dashboard');
     },
     onError: (error: any) => {

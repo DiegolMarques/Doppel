@@ -9,7 +9,7 @@ export async function middleware(request: NextRequest) {
   const protectedRoutes = ['/dashboard', '/profile', '/settings']
 
   // Check if the user is on the root path
-  if (request.nextUrl.pathname === '/') {
+  if (request.nextUrl.pathname === '/' || request.nextUrl.pathname === '/login' || request.nextUrl.pathname === '/signup') {
     // If the user is authenticated, redirect to dashboard
     if (token) {
       return NextResponse.redirect(new URL('/dashboard', request.url))

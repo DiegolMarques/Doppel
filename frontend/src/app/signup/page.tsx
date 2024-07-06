@@ -28,13 +28,14 @@ const SignUp: React.FC = () => {
         const user = userCredential.user;
         const email = user.email;
         const firebaseId = user.uid;
-        axios.post(process.env.NEXT_PUBLIC_API_URL + '/users/', {email: email, firebaseId: firebaseId});
+        axios.post(process.env.NEXT_PUBLIC_API_URL + '/users/', { email: email, firebaseId: firebaseId });
       });
       toast({
         title: "Success",
         description: "Your account has been created successfully.",
         duration: 3000,
       });
+      router.refresh();
       router.push('/dashboard'); // Redirect to dashboard after successful sign-up
     } catch (error: any) {
       console.error(error.message);
