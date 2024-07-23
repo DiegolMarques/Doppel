@@ -11,7 +11,7 @@ export default function Welcome() {
           Welcome to <span className="text-blue-600">Doppel</span>
         </h1>
         <p className="text-xl text-zinc-700">
-          Let's get started with your Doppel experience.
+          Le&apos;s get started with your Doppel experience.
         </p>
         <Link href="/onboarding/dashboard" className={buttonVariants({
           size: "lg",

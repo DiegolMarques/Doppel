@@ -136,7 +136,7 @@ export default function CreateDoppels() {
                 <p><strong>Occupation:</strong> {occupation || 'Not set'}</p>
                 <p><strong>Race:</strong> {race || 'Not set'}</p>
                 <p><strong>Country of Origin:</strong> {countryOfOrigin || 'Not set'}</p>
-                <p><strong># of Doppels</strong> {numOfDoppels || 'Not set'}</p>
+                <p><strong># of Doppel:</strong> {numOfDoppels || 'Not set'}</p>
               </div>
             </div>
           </div>
