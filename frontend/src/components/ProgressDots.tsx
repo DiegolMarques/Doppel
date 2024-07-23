@@ -1,7 +1,7 @@
 // components/ProgressDots.js
 import React from 'react';
 
-const ProgressDots = ({ totalSteps, currentStep }) => {
+const ProgressDots = ({ totalSteps, currentStep }: { totalSteps: number, currentStep: number }) => {
   return (
     <div className="fixed bottom-8 left-1/2 transform -translate-x-1/2">
       <div className="bg-white border border-gray-200 rounded-full px-4 py-2 shadow-md">

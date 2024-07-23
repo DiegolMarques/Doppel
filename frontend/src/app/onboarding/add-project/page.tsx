@@ -16,18 +16,21 @@ export default function CreateDoppels() {
   const [occupation, setOccupation] = useState('');
   const [race, setRace] = useState('');
   const [countryOfOrigin, setCountryOfOrigin] = useState('');
+  const [numOfDoppels, setNumOfDoppels] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
   const handleSubmit = async (e: { preventDefault: () => void; }) => {
     e.preventDefault();
     setIsLoading(true);
+
+    //TODO: PULL CURRENT SIGNED IN USER AND SEND ALONG WITH OTHER INFO
     
     try {
       const response = await fetch('/api/createDoppels', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ projectName, gender, ageRange, occupation, race, countryOfOrigin }),
+        body: JSON.stringify({ projectName, gender, ageRange, occupation, race, countryOfOrigin, numOfDoppels }),
       });
 
       if (response.ok) {
@@ -100,6 +103,14 @@ export default function CreateDoppels() {
               className="w-full p-3 border border-gray-300 rounded-md"
               required
             />
+            <input
+              type="text"
+              placeholder="How many Doppels?"
+              value={numOfDoppels}
+              onChange={(e) => setNumOfDoppels(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-md"
+              required
+            />
             <button 
               type="submit" 
               className={buttonVariants({ size: "lg", className: 'w-full' })}
@@ -125,6 +136,7 @@ export default function CreateDoppels() {
                 <p><strong>Occupation:</strong> {occupation || 'Not set'}</p>
                 <p><strong>Race:</strong> {race || 'Not set'}</p>
                 <p><strong>Country of Origin:</strong> {countryOfOrigin || 'Not set'}</p>
+                <p><strong># of Doppels</strong> {numOfDoppels || 'Not set'}</p>
               </div>
             </div>
           </div>
