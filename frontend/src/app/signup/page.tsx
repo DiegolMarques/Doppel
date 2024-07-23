@@ -36,7 +36,7 @@ const SignUp: React.FC = () => {
         duration: 3000,
       });
       router.refresh();
-      router.push('/dashboard'); // Redirect to dashboard after successful sign-up
+      router.push('/onboarding/welcome'); // Redirect to dashboard after successful sign-up
     } catch (error: any) {
       console.error(error.message);
       toast({
