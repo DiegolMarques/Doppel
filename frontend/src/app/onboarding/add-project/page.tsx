@@ -3,8 +3,12 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { buttonVariants } from "@/components/ui/button";
-import { ArrowRight, Loader2, Ghost } from "lucide-react";
+import { ArrowRight, Loader2 } from "lucide-react";
 import ProgressDots from '@/components/ProgressDots';
+import { generateDoppels } from '@/lib/gemini';
+import axios from 'axios';
+import {auth} from '@/lib/firebase';
+
 
 const genderOptions = ['Male', 'Female', 'Non-binary', 'Other', 'Random'];
 const raceOptions = ['Asian', 'Black', 'Hispanic', 'White', 'Mixed', 'Other', 'Random'];
@@ -15,8 +19,11 @@ export default function CreateDoppels() {
   const [ageRange, setAgeRange] = useState('');
   const [occupation, setOccupation] = useState('');
   const [race, setRace] = useState('');
-  const [countryOfOrigin, setCountryOfOrigin] = useState('');
   const [numOfDoppels, setNumOfDoppels] = useState('');
+  // New state variables for additional fields
+  const [nationality, setNationality] = useState('');
+  const [city, setCity] = useState('');
+  const [personality, setPersonality] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
@@ -24,18 +31,18 @@ export default function CreateDoppels() {
     e.preventDefault();
     setIsLoading(true);
 
-    //TODO: PULL CURRENT SIGNED IN USER AND SEND ALONG WITH OTHER INFO
-    
     try {
-      const response = await fetch('/api/createDoppels', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ projectName, gender, ageRange, occupation, race, countryOfOrigin, numOfDoppels }),
-      });
 
-      if (response.ok) {
-        router.push('/dashboard');
+      const doppels = await generateDoppels(numOfDoppels, gender, race, ageRange, nationality, city, occupation, personality)
+
+      if (auth.currentUser !== null && typeof doppels != 'string' ) {
+        const userId = auth.currentUser.uid;
+        const doppels_uid = doppels.map(sublist => [...sublist, userId]);
+        await axios.post(process.env.NEXT_PUBLIC_API_URL + '/doppels/manydoppels', doppels_uid);
+        console.log("success created doppels in database")
       }
+
+
     } catch (error) {
       console.error('Error creating doppels:', error);
     } finally {
@@ -76,14 +83,6 @@ export default function CreateDoppels() {
               className="w-full p-3 border border-gray-300 rounded-md"
               required
             />
-            <input
-              type="text"
-              placeholder="Occupation or 'Random'"
-              value={occupation}
-              onChange={(e) => setOccupation(e.target.value)}
-              className="w-full p-3 border border-gray-300 rounded-md"
-              required
-            />
             <select
               value={race}
               onChange={(e) => setRace(e.target.value)}
@@ -97,9 +96,33 @@ export default function CreateDoppels() {
             </select>
             <input
               type="text"
-              placeholder="Country of Origin or 'Random'"
-              value={countryOfOrigin}
-              onChange={(e) => setCountryOfOrigin(e.target.value)}
+              placeholder="Nationality or 'Random'"
+              value={nationality}
+              onChange={(e) => setNationality(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-md"
+              required
+            />
+            <input
+              type="text"
+              placeholder="City or 'Random'"
+              value={city}
+              onChange={(e) => setCity(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-md"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Occupation or 'Random'"
+              value={occupation}
+              onChange={(e) => setOccupation(e.target.value)}
+              className="w-full p-3 border border-gray-300 rounded-md"
+              required
+            />
+            <input
+              type="text"
+              placeholder="Personality or 'Random'"
+              value={personality}
+              onChange={(e) => setPersonality(e.target.value)}
               className="w-full p-3 border border-gray-300 rounded-md"
               required
             />
@@ -133,9 +156,11 @@ export default function CreateDoppels() {
                 <p><strong>Project Name:</strong> {projectName || 'Not set'}</p>
                 <p><strong>Gender:</strong> {gender || 'Not set'}</p>
                 <p><strong>Age Range:</strong> {ageRange || 'Not set'}</p>
-                <p><strong>Occupation:</strong> {occupation || 'Not set'}</p>
                 <p><strong>Race:</strong> {race || 'Not set'}</p>
-                <p><strong>Country of Origin:</strong> {countryOfOrigin || 'Not set'}</p>
+                <p><strong>Nationality:</strong> {nationality || 'Not set'}</p>
+                <p><strong>City:</strong> {city || 'Not set'}</p>
+                <p><strong>Occupation:</strong> {occupation || 'Not set'}</p>
+                <p><strong>Personality:</strong> {personality || 'Not set'}</p>
                 <p><strong># of Doppel:</strong> {numOfDoppels || 'Not set'}</p>
               </div>
             </div>

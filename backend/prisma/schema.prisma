@@ -11,12 +11,14 @@ generator client {
 // prisma/schema.prisma
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
+  url      = env("DATABASE_URL_DEV")
 }
 
 model User {
   id    String @id @default(cuid())
   email String @unique
+
+  doppels Doppel[]
 
   Conversation Conversation[]
 
@@ -33,6 +35,22 @@ enum UploadStatus {
   SUCCESS
 }
 
+model Doppel {
+  id           String         @id @default(cuid())
+  user         User           @relation(fields: [userId], references: [id])
+  name         String
+  gender       String
+  age          Int
+  race         String
+  nationality  String
+  city         String
+  occupation  String
+  personality  String
+  bio String
+  userId       String
+  Conversation Conversation[]
+}
+
 model Conversation {
   id   String @id @default(cuid())
   name String
@@ -44,4 +62,7 @@ model Conversation {
   updatedAt DateTime @updatedAt
   User      User?    @relation(fields: [userId], references: [id])
   userId    String?
+
+  doppel   Doppel @relation(fields: [doppelId], references: [id]) 
+  doppelId String
 }

@@ -19,7 +19,7 @@
   },
   "include": [
     "src/**/*"
-  ],
+, "../frontend/src/lib/gemini.ts"  ],
   "exclude": [
     "node_modules",
     "**/*.spec.ts"

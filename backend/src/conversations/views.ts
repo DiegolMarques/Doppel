@@ -1,5 +1,6 @@
 import { Router, Request, Response } from "express";
 import { PrismaClient } from "@prisma/client";
+import { NotFoundError } from "@prisma/client/runtime/library";
 
 const conversationRouter = Router();
 const prisma = new PrismaClient();
@@ -42,7 +43,8 @@ conversationRouter.post("/conversation", async (req: Request, res: Response) => 
         name,
         conversationString,
         uploadStatus: "SUCCESS", // Assuming you want to set it as successful upon creation
-        userId
+        userId,
+        doppelId: '',
       },
     });
     res.status(201).json(newConversation);
@@ -51,6 +53,28 @@ conversationRouter.post("/conversation", async (req: Request, res: Response) => 
     res.status(500).json({ error: 'Internal server error' });
   }
 });
+
+conversationRouter.patch("/conversation/addDoppel", async (req: Request, res: Response) => {
+  const { conversationId, doppelId } = req.body;
+  try {
+    const updatedConversation = await prisma.conversation.update({
+      where: { id: conversationId },
+      data: {
+        doppel: {
+          connect: { id: doppelId },
+        },
+        doppelId: doppelId,
+      },
+      include: {
+        doppel: true,
+      },
+    });
+    res.status(201).json(updatedConversation);
+  } catch (error) {
+    console.error('Error creating conversation:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+})
 
 
 
